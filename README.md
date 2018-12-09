@@ -5,7 +5,7 @@ Composer ready [TCPDI](https://github.com/pauln/tcpdi).
 
 PDF importer for [TCPDF](http://www.tcpdf.org/), based on [FPDI](http://www.setasign.de/products/pdf-php-solutions/fpdi/).
 Requires [pauln/tcpdi_parser](https://github.com/pauln/tcpdi_parser) and [FPDF_TPL](http://www.setasign.de/products/pdf-php-solutions/fpdi/downloads/)
-which included in the repository.
+which are included in the repository.
 
 Installation
 ------------
@@ -15,7 +15,7 @@ Link package in composer.json, e.g.
 ```json
 {
     "require": {
-        "propa/tcpdi": "dev-master"
+        "propa/tcpdi": "^1.1"
     }
 }
 ```
@@ -36,15 +36,38 @@ $idx = $pdf->importPage(1);
 $pdf->useTemplate($idx);
 
 $pdfdata = file_get_contents('/path/to/other-file.pdf'); // Simulate only having raw data available.
-$pagecount = $pdf->setSourceData($pdfdata); 
-for ($i = 1; $i <= $pagecount; $i++) { 
+$pagecount = $pdf->setSourceData($pdfdata);
+for ($i = 1; $i <= $pagecount; $i++) {
     $tplidx = $pdf->importPage($i);
     $pdf->AddPage();
-    $pdf->useTemplate($tplidx); 
+    $pdf->useTemplate($tplidx);
 }
+
+// Create new PDF document.
+$pdf = new TCPDI(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// Add a page from a PDF by file path.
+$pdf->setSourceFile('/path/to/file-to-import.pdf');
+
+// Import the bleed box (default is crop box) for page 1.
+$tplidx = $pdf->importPage(1, '/BleedBox');
+$size = $pdf->getTemplatesize($tplidx);
+$orientation = ($size['w'] > $size['h']) ? 'L' : 'P';
+
+$pdf->AddPage($orientation);
+
+// Set page boxes from imported page 1.
+$pdf->setPageFormatFromTemplatePage(1, $orientation);
+
+// Import the content for page 1.
+$pdf->useTemplate($tplidx);
+
+// Import the annotations for page 1.
+$pdf->importAnnotations(1);
 ```
 
 TCPDI_PARSER
 ============
 
 Parser for use with TCPDI, based on TCPDF_PARSER.  Supports PDFs up to v1.7.
+
