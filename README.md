@@ -12,12 +12,8 @@ Installation
 
 Link package in composer.json, e.g.
 
-```json
-{
-    "require": {
-        "propa/tcpdi": "^1.1"
-    }
-}
+```sh
+composer require propa/tcpdi
 ```
 
 Usage
