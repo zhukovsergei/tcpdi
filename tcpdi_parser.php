@@ -741,7 +741,7 @@ class tcpdi_parser {
                 if ($char == '(') {
                     $open_bracket = 1;
                     while ($open_bracket > 0) {
-                        if (!isset($data{$strpos})) {
+                        if (!isset($data[$strpos])) {
                             break;
                         }
                         $ch = $data[$strpos];
